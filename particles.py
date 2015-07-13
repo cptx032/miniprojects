@@ -10,7 +10,7 @@ WINDOW_SIZE = [500,500]
 TICKER = 30
 CIRCLE = 'circle'
 RECTANGLE = 'rectangle'
-MODE = CIRCLE # circle | rectangle
+MODE = RECTANGLE # circle | rectangle
 
 def centralize():
 	return '%dx%d+%d+%d' % (WINDOW_SIZE[0], WINDOW_SIZE[1],
@@ -37,26 +37,6 @@ class Particle:
 	def next(self):
 		self.pos[0] = self.pos[0] + self.vel[0]
 		self.pos[1] = self.pos[1] + self.vel[1]
-
-		if self.pos[0] < 0.0:
-			self.vel[0] = self.vel[0] * -1 * self.restitution_coeficient
-		elif self.pos[0] > WINDOW_SIZE[0]:
-			self.vel[0] = self.vel[0] * -1 * self.restitution_coeficient
-
-		if self.pos[1] < 0.0:
-			self.vel[1] = self.vel[1] * -1 * self.restitution_coeficient
-		elif self.pos[1] > WINDOW_SIZE[1]:
-			self.vel[1] = self.vel[1] * -1 * self.restitution_coeficient
-		
-		if self.pos[0] < 0.0:
-			self.pos[0] = 0.0
-		elif self.pos[0] > WINDOW_SIZE[0]:
-			self.pos[0] = WINDOW_SIZE[0]
-			
-		if self.pos[1] < 0.0:
-			self.pos[1] = 0.0
-		elif self.pos[1] > WINDOW_SIZE[1]:
-			self.pos[1] = WINDOW_SIZE[1]
 	
 	def applyforce(self, force):
 		accel = [force[0]/self.mass, force[1]/self.mass]
@@ -77,7 +57,7 @@ class Particle:
 
 class Body(Particle):
 	def __init__(self, *args, **kws):
-		self.radius = kws.get('radius', 40.0)
+		self.radius = kws.get('radius', 15.0)
 		self.color = kws.get('color', '#00aacc')
 		Particle.__init__(self, *args, **kws)
 	
@@ -111,6 +91,39 @@ class Body(Particle):
 		x = abs(self.x-particle.x)
 		y = abs(self.y-particle.y)
 		return math.sqrt(x**2 + y**2)
+	
+	def inverse(self):
+		self.vel[0] *= -1
+		self.vel[1] *= -1
+	
+	def next(self):
+		Particle.next(self)
+		n = False
+		if (self.pos[0]-self.radius) < 0.0:
+			self.vel[0] = self.vel[0] * -1 * self.restitution_coeficient
+			n = True
+		elif (self.pos[0]+self.radius) > WINDOW_SIZE[0]:
+			self.vel[0] = self.vel[0] * -1 * self.restitution_coeficient
+			n = True
+
+		if (self.pos[1]-self.radius) < 0.0:
+			self.vel[1] = self.vel[1] * -1 * self.restitution_coeficient
+			n = True
+		elif (self.pos[1]+self.radius) > WINDOW_SIZE[1]:
+			self.vel[1] = self.vel[1] * -1 * self.restitution_coeficient
+			n = True
+		if n:
+			Particle.next(self)
+		# threshould
+		if (self.pos[0]-self.radius) < 0.0:
+			self.pos[0] = self.radius
+		elif (self.pos[0]+self.radius) > WINDOW_SIZE[0]:
+			self.pos[0] = WINDOW_SIZE[0] - self.radius
+			
+		if (self.pos[1]-self.radius) < 0.0:
+			self.pos[1] = self.radius
+		elif (self.pos[1]+self.radius) > WINDOW_SIZE[1]:
+			self.pos[1] = WINDOW_SIZE[1] - self.radius
 
 class Environment:
 	def __init__(self, *args, **kws):
@@ -136,7 +149,11 @@ def colliding_with(particle):
 	for _p in env.particles:
 		if particle != _p:
 			if particle.colliding(_p):
-				print "ok"
+				# esse inversao nao pode ser feita no dois eixos
+				particle.inverse() # [fixme]
+				_p.inverse()
+				particle.next()
+				_p.next()
 
 window = Tk()
 window.resizable(0,0)
@@ -148,7 +165,7 @@ window.geometry(centralize())
 env.forces.append([0.0,10.0]) # gravity
 env.forces.append([0.0,0.0]) # wind
 
-NUM_PARTICLES = 2
+NUM_PARTICLES = 6
 for i in range(NUM_PARTICLES):
 	kws = {
 		'pos' : [random.randint(0,WINDOW_SIZE[0]), random.randint(0,WINDOW_SIZE[1])],
@@ -169,7 +186,14 @@ def _main(*args):
 	for force in env.forces:
 		txt += '   ' + str(force) + '\n'
 	drawtext(canvas, txt)
-	
+	'''
+	if env.particles[0].colliding(env.particles[1]):
+		print "ok"
+		env.particles[1].inverse()
+		env.particles[0].inverse()
+		env.particles[1].next()
+		env.particles[0].next()
+	'''
 	window.after(TICKER, _main)
 
 _main()
