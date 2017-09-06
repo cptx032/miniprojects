@@ -9,3 +9,6 @@ miniprojects made in python
 
 ## Pixel Plot Animation (see too: https://github.com/cptx032/calcium)
 ![pixel plot](screenshots/pixel_plot.png)
+
+## Control gradient with your mouse
+![fast linear gradient](screenshots/fast_linear_gradient.png)
