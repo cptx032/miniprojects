@@ -6,3 +6,6 @@ miniprojects made in python
 
 # Fractal Tkinter
 [![fractal tkinter](http://share.gifyoutube.com/KRxZbY.gif)](https://www.youtube.com/watch?v=Ic1oHxMDQQs)
+
+## Pixel Plot Animation (see too: https://github.com/cptx032/calcium)
+![pixel plot](screenshots/pixel_plot.png)
