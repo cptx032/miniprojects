@@ -12,3 +12,7 @@ miniprojects made in python
 
 ## Control gradient with your mouse
 ![fast linear gradient](screenshots/fast_linear_gradient.png)
+
+## Text variations
+### Represent text in a weird graphical way
+![text variations](screenshots/text_variations.png)
