@@ -16,3 +16,7 @@ miniprojects made in python
 ## Text variations
 ### Represent text in a weird graphical way
 ![text variations](screenshots/text_variations.png)
+
+## Fluid.py
+### trying simulate fluids in tkinter
+![fluid.py](screenshots/fluid.png)
