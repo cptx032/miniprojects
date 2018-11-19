@@ -20,3 +20,7 @@ miniprojects made in python
 ## Fluid.py
 ### trying simulate fluids in tkinter
 ![fluid.py](screenshots/fluid.png)
+
+## frequencyview.py
+### a very simple music frequency view (works with WAV-16bit)
+![frequencyview.py](screenshots/frequencyview.gif)
